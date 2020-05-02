@@ -1,6 +1,9 @@
 var excelTabla=[];
 var btnDatos = document.getElementById('btnDatos');
 var btnValidar = document.getElementById('btnValidar');
+
+var input = document.getElementById('input');
+var btnAlert = document.getElementById('btnAlert');
 btnDatos.addEventListener("click", function () {
     var tabla = document.getElementById('example');
     tabla.innerHTML="";
@@ -12,6 +15,37 @@ btnValidar.addEventListener("click", function () {
     ListarTabla();
 });
 
+
+btnAlert.addEventListener("click", function () {
+  
+    handleFileSelect(input);
+});
+function handleFileSelect(evt) {
+    //Get the files from Upload control
+    var files = evt.target.files;
+    var i, f;
+    //Loop through files
+    for (i = 0, f = files[i]; i != files.length; ++i) {
+        var reader = new FileReader();
+        var name = f.name;
+        reader.onload = function (evt) {
+            var data = evt.target.result;
+
+            var result;
+			/* convert from workbook to array of arrays */
+			workbook = XLSX.read(data, {type: 'binary'});
+			var first_sheet_name = workbook.SheetNames[0];
+
+			// var first_worksheet = data.Sheets[data.SheetNames[0]];
+		
+
+			
+            var data = XLSX.utils.sheet_to_json(first_sheet_name, {header:1});
+            alert(result[0].Column1);
+        };
+        reader.readAsArrayBuffer(f);
+    }
+}
 
 function ListarTabla() {
     var tabla = document.getElementById('example');
@@ -59,6 +93,7 @@ function obtenerDatosDeExcel() {
 	var bstr = arr.join("");
 
 	/* Call XLSX */
+	
 	var workbook = XLSX.read(bstr, {type:"binary"});
 
 	/* DO SOMETHING WITH workbook HERE */
@@ -98,7 +133,8 @@ function validateEmail(email){
     emailValido = emailValido.replace(/[0-9]/g,"");
     emailValido = emailValido.replace(/\./g," ");
     if(emailValido=="info" || emailValido=="ventas" || emailValido=="contacto"){
-        emailValido = emailRecibido.split("@")[1];
+		emailValido = emailRecibido.split("@")[1];
+		emailValido = emailValido.split(".")[0];
         emailValido = "<b>"+emailValido+"</b>";
 
     }
