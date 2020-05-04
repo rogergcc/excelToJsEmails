@@ -7,12 +7,12 @@ var btnAlert = document.getElementById('btnAlert');
 btnDatos.addEventListener("click", function () {
     var tabla = document.getElementById('example');
     tabla.innerHTML="";
-    obtenerDatosDeExcel();
+    listarTabla();
    
 });
 btnValidar.addEventListener("click", function () {
   
-    ListarTabla();
+    listarTablaValidada();
 });
 
 
@@ -20,6 +20,16 @@ btnAlert.addEventListener("click", function () {
   
     handleFileSelect(input);
 });
+
+window.addEventListener('load', function() {
+    console.log('All assets are loaded')
+
+    obtenerDatosDeExcel();
+
+})
+
+
+
 function handleFileSelect(evt) {
     //Get the files from Upload control
     var files = evt.target.files;
@@ -47,8 +57,9 @@ function handleFileSelect(evt) {
     }
 }
 
-function ListarTabla() {
+function listarTablaValidada() {
     var tabla = document.getElementById('example');
+    tabla.innerHTML = "";
     tabla.innerHTML="";
     var con = '';
 
@@ -57,6 +68,7 @@ function ListarTabla() {
     var html = "";
     for (var i = 0; i < excelTabla.length; i++) {
         html += "<tr>";
+        html += "<td>" + (i+1) + "</td>";
         html += "<td>" + excelTabla[i].Correos + "</td>";
 		html += "<td>" + validateEmail(excelTabla[i].Correos) + "</td>";
         html += "</tr>";
@@ -68,50 +80,74 @@ function ListarTabla() {
     contenido=[];
     //var jsonData = contenido;
     //debugger
-
-
-
 	
+}
+
+function listarTabla() {
+    var tabla = document.getElementById('example');
+    tabla.innerHTML = "";
+    tabla.innerHTML="";
+    var con = '';
+
+
+	var contenido = excelTabla;
+    var html = "";
+    for (var i = 0; i < excelTabla.length; i++) {
+        html += "<tr>";
+        html += "<td>" + (i+1) + "</td>";
+        html += "<td>" + excelTabla[i].Correos + "</td>";
+        html += "</tr>";
+
+	}
+
+    tabla.innerHTML = html;
+
+    contenido=[];
+    //var jsonData = contenido;
+    //debugger
 	
 }
 
 function obtenerDatosDeExcel() {
 
-/* set up XMLHttpRequest */
-	var url = "correos.xlsx";
-	var oReq = new XMLHttpRequest();
-	oReq.open("GET", url, true);
-	oReq.responseType = "arraybuffer";
+    /* set up XMLHttpRequest */
+    var url = "correos.xlsx";
+    var oReq = new XMLHttpRequest();
+    oReq.open("GET", url, true);
+    oReq.responseType = "arraybuffer";
 
-	oReq.onload = function(e) {
-	var arraybuffer = oReq.response;
+    oReq.onload = function(e) {
+    var arraybuffer = oReq.response;
 
-	/* convert data to binary string */
-	var data = new Uint8Array(arraybuffer);
-	var arr = new Array();
-	for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
-	var bstr = arr.join("");
+    /* convert data to binary string */
+    var data = new Uint8Array(arraybuffer);
+    var arr = new Array();
+    for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+    var bstr = arr.join("");
 
-	/* Call XLSX */
-	
-	var workbook = XLSX.read(bstr, {type:"binary"});
+    /* Call XLSX */
 
-	/* DO SOMETHING WITH workbook HERE */
-	var first_sheet_name = workbook.SheetNames[0];
-	/* Get worksheet */
-	var worksheet = workbook.Sheets[first_sheet_name];
-	
+    var workbook = XLSX.read(bstr, {type:"binary"});
 
-	
+    /* DO SOMETHING WITH workbook HERE */
+    var first_sheet_name = workbook.SheetNames[0];
+    /* Get worksheet */
+    var worksheet = workbook.Sheets[first_sheet_name];
 
-	excelTabla = XLSX.utils.sheet_to_json(worksheet, {
-				raw: true
-			});
-				
-	console.table(excelTabla);
-	}
 
-	oReq.send();
+
+
+    excelTabla = XLSX.utils.sheet_to_json(worksheet, {
+                raw: true
+            });
+    console.log("-----");
+    console.table(excelTabla);
+    }
+
+    oReq.send();
+
+
+    
 }
 
 
@@ -132,7 +168,19 @@ function validateEmail(email){
     emailValido = emailRecibido.split("@")[0];
     emailValido = emailValido.replace(/[0-9]/g,"");
     emailValido = emailValido.replace(/\./g," ");
-    if(emailValido=="info" || emailValido=="ventas" || emailValido=="contacto"){
+    emailValido= emailValido.toLocaleLowerCase();
+
+    if( emailValido=="info" || emailValido=="ventas" || emailValido=="contacto" || 
+        emailValido=="informaciones" || emailValido=="info" ||  emailValido=="support" ||  
+        emailValido=="soporte" || emailValido=="prensa" ||  emailValido=="abastecimiento" ||
+        emailValido=="ventas" || emailValido=="venta" ||  emailValido=="administrador" ||
+        emailValido=="administracion" || emailValido=="ayuda" ||  emailValido=="postula" ||
+        emailValido=="postulacion" || emailValido=="personal" ||  emailValido=="rrhh" ||
+        emailValido=="secretaria" || emailValido=="consulta" ||  emailValido=="reserva" ||
+        emailValido=="reservas" || emailValido=="gerencia" ||  emailValido=="contabilidad" ||
+        emailValido=="servicio" || emailValido=="servicios" ||  emailValido=="finanzas" 
+        
+    ){
 		emailValido = emailRecibido.split("@")[1];
 		emailValido = emailValido.split(".")[0];
         emailValido = "<b>"+emailValido+"</b>";
