@@ -4,6 +4,9 @@ var btnValidar = document.getElementById('btnValidar');
 
 var input = document.getElementById('input');
 var btnAlert = document.getElementById('btnAlert');
+
+var btnExportExcel = document.getElementById('btnExportExcel');
+
 btnDatos.addEventListener("click", function () {
     var tabla = document.getElementById('example');
     tabla.innerHTML="";
@@ -21,12 +24,23 @@ btnAlert.addEventListener("click", function () {
     handleFileSelect(input);
 });
 
+
+btnExportExcel.addEventListener("click", function () {
+  
+    // exportReportToExcel();
+    exportTableToExcel('example','export_correos');
+});
 window.addEventListener('load', function() {
     console.log('All assets are loaded')
 
     obtenerDatosDeExcel();
+    
+    // var wb = XLSX.utils.table_to_book(document.getElementById('example'), {sheet:"Sheet JS"});
+    // var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
 
 })
+
+
 
 
 
@@ -68,8 +82,8 @@ function listarTablaValidada() {
     var html = "";
     for (var i = 0; i < excelTabla.length; i++) {
         html += "<tr>";
-        html += "<td>" + (i+1) + "</td>";
-        html += "<td>" + excelTabla[i].Correos + "</td>";
+        html += "<td data-t='n'>" + (i+1) + "</td>";
+        html += "<td data-a-indent='2'>" + excelTabla[i].Correos + "</td>";
 		html += "<td>" + validateEmail(excelTabla[i].Correos) + "</td>";
         html += "</tr>";
 
@@ -94,7 +108,7 @@ function listarTabla() {
     var html = "";
     for (var i = 0; i < excelTabla.length; i++) {
         html += "<tr>";
-        html += "<td>" + (i+1) + "</td>";
+        html += "<td data-t='n'>" +  parseInt((i+1)) + "</td>";
         html += "<td>" + excelTabla[i].Correos + "</td>";
         html += "</tr>";
 
@@ -148,6 +162,52 @@ function obtenerDatosDeExcel() {
 
 
     
+}
+
+function exportReportToExcel() {
+    let table = document.getElementById("example"); // you can use document.getElementById('tableId') as well by providing id to the table tag
+    TableToExcel.convert(table, { // html code may contain multiple tables so here we are refering to 1st table tag
+      name: `export_emails.xlsx`, // fileName you could use any name
+      sheet: {
+        name: 'Correos' // sheetName
+      }
+    });
+
+    
+  }
+
+function exportTableToExcel(tableID, filename = ''){
+    var downloadLink;
+    var dataType = 'application/vnd.ms-excel';
+    var tableSelect = document.getElementById(tableID);
+    var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+    
+    // Specify file name
+    filename = filename?filename+'.xls':'excel_data.xls';
+    
+    // Create download link element
+    downloadLink = document.createElement("a");
+    
+    document.body.appendChild(downloadLink);
+    
+    if(navigator.msSaveOrOpenBlob){
+        var blob = new Blob(['ufeff', tableHTML], {
+            type: dataType
+        });
+        navigator.msSaveOrOpenBlob( blob, filename);
+    }else{
+        // Create a link to the file
+        downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+    
+        // Setting the file name
+        downloadLink.download = filename;
+        
+        //triggering the function
+        downloadLink.click();
+    }
+
+        
+
 }
 
 

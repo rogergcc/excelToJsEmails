@@ -3,6 +3,7 @@
 <head>
 <title>Excel to JSON Demo</title>
 <script src="xlsx.full.min.js"></script>
+
 <link rel="stylesheet" href="css/estilos2.css">
 <style type="text/css">
 	b{
@@ -24,13 +25,17 @@
 			
 			<button id="btnDatos" class="btn btn-success">obtener registros del Excel</button>
 			
-			<button id="btnValidar" class="btn btn-success">Validar Registros</button>
+      <button id="btnValidar" class="btn btn-outline-success">Validar Registros</button>
+      
+      <!-- <button onclick="exportTableToExcel('example', 'members-data')">Export Table Data To Excel File</button> -->
+      <button id="btnExportExcel" class="btn btn-dark">Exportar a Excel</button>
+
         </div>
         <div class="col-lg-4"></div>
     </div>
     <div class="row col-lg-12">
       
-    <table id="example" class="table ">
+    <table id="example" class="table" data-cols-width="10,30,40">
 
       </table>
       
@@ -38,6 +43,6 @@
    
 	<script src="js/correos.js"></script>
 
-
+  <script src="tableToExcel.js"></script>
 </body>
 </html>
